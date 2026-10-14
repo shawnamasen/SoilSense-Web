@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+# Dependencies
+node_modules/
+dist/
+
+# Firebase environment files
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# System files
+.DS_Store
+Thumbs.db
