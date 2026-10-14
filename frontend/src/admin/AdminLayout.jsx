@@ -91,7 +91,7 @@ export default function AdminLayout() {
 
     <aside className={`admin-sidebar ${open ? 'is-open' : ''}`}>
       <div className="admin-brand-row">
-        <NavLink to="/admin/dashboard" replace className="admin-brand" onClick={() => setOpen(false)}>
+        <NavLink to="/admin/dashboard" className="admin-brand" onClick={() => setOpen(false)}>
           <span className="admin-brand-mark"><Sprout /></span>
           <span><strong>Soil<span>Sense</span></strong><small>Admin Portal</small></span>
         </NavLink>
@@ -101,7 +101,7 @@ export default function AdminLayout() {
       <nav className="admin-nav">
         {adminNavGroups.map(group => <div className="admin-nav-group" key={group.label}>
           <p>{group.label}</p>
-          {group.links.map(({ to, label, icon: Icon }) => <NavLink to={to} replace key={to} onClick={() => setOpen(false)} className={({ isActive }) => `admin-nav-link ${isActive ? 'active' : ''}`}>
+          {group.links.map(({ to, label, icon: Icon }) => <NavLink to={to} key={to} onClick={() => setOpen(false)} className={({ isActive }) => `admin-nav-link ${isActive ? 'active' : ''}`}>
             <Icon /> <span>{label}</span>
           </NavLink>)}
         </div>)}
