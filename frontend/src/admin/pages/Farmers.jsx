@@ -229,7 +229,10 @@ export default function Farmers() {
               <option value="farmer">Farmer</option>
               <option value="technician">Technician</option>
             </select>
-            <button className={`admin-btn ${selected.active ? 'danger' : 'primary'}`} type="button" disabled={Boolean(busy)} onClick={() => run(`active-${selected.id}`, () => setUserActive(selected, !selected.active), selected.active ? 'Account deactivated.' : 'Account reactivated.')}>
+            <button className={`admin-btn ${selected.active ? 'danger' : 'primary'}`} type="button" disabled={Boolean(busy)} onClick={() => {
+              if (selected.active && !window.confirm(`Deactivate ${selected.name}'s account? This will revoke their device access until the account is reactivated.`)) return;
+              void run(`active-${selected.id}`, () => setUserActive(selected, !selected.active), selected.active ? 'Account deactivated.' : 'Account reactivated.');
+            }}>
               {selected.active ? <><UserX /> Deactivate Account</> : <><UserCheck /> Reactivate Account</>}
             </button>
             <a className="admin-btn" href="/admin/devices"><ShieldCheck /> Manage Device Ownership</a>

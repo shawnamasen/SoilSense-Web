@@ -7,6 +7,7 @@ import { useAdminPreferences } from './context/AdminPreferencesContext';
 import { getPortalNotificationSnapshot } from './services/adminFirestore';
 import { clearAdminReturnPath } from '../auth/adminReturnPath';
 import AdminPageBoundary from './components/AdminPageBoundary';
+import ConfirmDialog from './components/ConfirmDialog';
 import { safeErrorMessage } from '../shared/safeErrorMessage';
 import './admin.css';
 
@@ -25,6 +26,8 @@ export default function AdminLayout() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationError, setNotificationError] = useState('');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const notificationRef = useRef(null);
   const today = useMemo(() => new Intl.DateTimeFormat('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
@@ -67,9 +70,16 @@ export default function AdminLayout() {
   }), [notifications, preferences]);
 
   async function handleLogout() {
-    await logout();
-    clearAdminReturnPath();
-    navigate('/login', { replace: true });
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await logout();
+      clearAdminReturnPath();
+      setShowLogoutConfirm(false);
+      navigate('/login', { replace: true });
+    } finally {
+      setLoggingOut(false);
+    }
   }
 
   async function toggleTheme() {
@@ -112,7 +122,7 @@ export default function AdminLayout() {
           <span className="admin-avatar">{initials(user?.name, user?.email)}</span>
           <span><strong>{user?.name || 'System Administrator'}</strong><small>System Administrator</small></span>
         </div>
-        <button type="button" className="admin-logout" onClick={handleLogout}><LogOut /> Logout</button>
+        <button type="button" className="admin-logout" onClick={() => setShowLogoutConfirm(true)}><LogOut /> Logout</button>
       </div>
     </aside>
 
@@ -143,5 +153,16 @@ export default function AdminLayout() {
       </header>
       <div className="admin-content"><AdminPageBoundary key={location.pathname}><Outlet /></AdminPageBoundary></div>
     </main>
+    <ConfirmDialog
+      open={showLogoutConfirm}
+      title="Log out of SoilSense?"
+      confirmLabel="Yes, log out"
+      tone="danger"
+      busy={loggingOut}
+      onCancel={() => setShowLogoutConfirm(false)}
+      onConfirm={handleLogout}
+    >
+      <p>Are you sure you want to log out of your administrator account?</p>
+    </ConfirmDialog>
   </div>;
 }
